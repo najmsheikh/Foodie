@@ -13,10 +13,10 @@ app.use(bodyParser.urlencoded({
 
 
 app.post('/message', function(req, res) {
-    if (isRequest) {
+    if (isRequest(req.body.Body)) {
         console.log('Tis a novice!');
     }
-    if (isSubmission) {
+    if (isSubmission(req.body.Body)) {
         console.log('Tis a pro!');
     }
 });
