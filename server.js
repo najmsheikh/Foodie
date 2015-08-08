@@ -28,7 +28,7 @@ function isRequest(msg) {
     return false;
 };
 
-function isSubmission() {
+function isSubmission(msg) {
     if ((msg.indexOf('I am known for') > -1) || (msg.indexOf('I can help find') > -1) || (msg.indexOf('I can help try') > -1)) {
         return true;
     }
