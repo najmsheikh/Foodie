@@ -19,6 +19,7 @@ app.post('/message', function(req, res) {
     if (isSubmission(req.body.Body)) {
         console.log('Tis a pro!');
     }
+    console.log('dammit');
 });
 
 function isRequest(msg) {
