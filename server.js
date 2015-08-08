@@ -3,7 +3,7 @@ var firebase = require('firebase');
 var bodyParser = require('body-parser');
 var twilio = require('twilio')(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_CODE);
 
-var fb = new firebase(process.env.FIREBASE_URL);
+// var fb = new firebase(process.env.FIREBASE_URL);
 var app = express();
 
 app.use(bodyParser.urlencoded({
