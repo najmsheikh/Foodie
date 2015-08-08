@@ -23,7 +23,7 @@ app.post('/message', function(req, res) {
 });
 
 function isRequest(msg) {
-    if ((msg.indexOf('I want to try out') > -1) || (msg.indexOf('I would like to try') > -1) || (msg.indexOf('I feel like trying') > -1)) {
+    if ((msg.indexOf('I want to try') > -1) || (msg.indexOf('I would like to try') > -1) || (msg.indexOf('I feel like trying') > -1)) {
         return true;
     }
     return false;
