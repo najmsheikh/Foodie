@@ -22,14 +22,14 @@ app.post('/message', function(req, res) {
 });
 
 function isRequest(msg) {
-    if ((msg.indexOf('I want to try out') > -1)) || (msg.indexOf('I would like to try') > -1) || (msg.indexOf('I feel like trying') > -1) {
+    if ((msg.indexOf('I want to try out') > -1) || (msg.indexOf('I would like to try') > -1) || (msg.indexOf('I feel like trying') > -1)) {
         return true;
     }
     return false;
 };
 
 function isSubmission() {
-    if ((msg.indexOf('I am known for') > -1)) || (msg.indexOf('I can help find') > -1) || (msg.indexOf('I can help try') > -1) {
+    if ((msg.indexOf('I am known for') > -1) || (msg.indexOf('I can help find') > -1) || (msg.indexOf('I can help try') > -1)) {
         return true;
     }
     return false;
