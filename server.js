@@ -18,20 +18,7 @@ app.post('/message', function(req, res) {
     var cuisine = getCuisine(msg);
 
     if (isGreeting(msg)) {
-        twilio.sms.messages.create({
-            to: number,
-            from: '+19173381853',
-            body: 'Heyoo! Just message back saying whether you want to try something or know about some cuisine and we\'ll set you right up'
-        }, function(err, msg) {
-            if (err)
-                console.log('Oh crap! Greeting effed up!');
-            if (!err) {
-                console.log('\n The message with the ID: \n' +
-                    msg.sid +
-                    '\n was sucessfully sent to ' + msg.to);
-                console.log('The message was: ' + msg.body + '\n')
-            };
-        });
+        text(number, 'works ffs!');
         twilio.sms.messages.create({
             to: number,
             from: '+19173381853',
@@ -80,20 +67,7 @@ app.post('/message', function(req, res) {
         fbChild.push({
             'number': number
         });
-        twilio.sms.messages.create({
-            to: number,
-            from: '+19173381853',
-            body: 'Gotcha! So what\'s your name?'
-        }, function(err, msg) {
-            if (err)
-                console.log('Oh crap! Submission effed up!' + '\n' + msg);
-            if (!err) {
-                console.log('\n The message with the ID: \n' +
-                    msg.sid +
-                    '\n was sucessfully sent to ' + msg.to);
-                console.log('The message was: ' + msg.body + '\n')
-            };
-        });
+        text(number, 'Shit works!');
     };
 
     if (isGoing(msg)) {
@@ -149,6 +123,7 @@ app.post('/message', function(req, res) {
     } else if (!isSubmission(msg) && !isRequest(msg) && !isGreeting(msg) && !isGoing(msg)) {
         nameSave(msg, req.body.From);
     }
+    res.end();
 });
 
 function isGreeting(msg) {
@@ -264,6 +239,31 @@ function nameSave(msg, number) {
         })
     })
 };
+
+function text(to, msg) {
+    // twilio.sendMessage({
+    //     to: to,
+    //     from: '+19173381853',
+    //     body: msg
+    // }, function(err, text) {
+    //     console.log('You sent: ' + text.body);
+    //     console.log('Current status of this text message is: ' + text.status);
+    // });
+    twilio.sms.messages.create({
+        to: to,
+        from: '+19173381853',
+        body: msg
+    }, function(err, msg) {
+        if (err)
+            console.log('Oh crap! Something effed up!');
+        if (!err) {
+            console.log('\n The message with the ID: \n' +
+                msg.sid +
+                '\n was sucessfully sent to ' + msg.to);
+            console.log('The message was: ' + msg.body + '\n')
+        };
+    });
+}
 
 app.post('/test', function(req, res) {
     var user = '';
