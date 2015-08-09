@@ -24,7 +24,7 @@ app.post('/message', function(req, res) {
             body: 'Heyoo! Just message back saying whether you want to try something or know about some cuisine and we\'ll set you right up'
         }, function(err, msg) {
             if (err)
-                console.log('Oh crap! Something effed up!');
+                console.log('Oh crap! Greeting effed up!');
             if (!err) {
                 console.log('\n The message with the ID: \n' +
                     msg.sid +
@@ -38,7 +38,7 @@ app.post('/message', function(req, res) {
             body: 'Disclaimer: Once paired, we gotta share your # to your fellow foodie so they can contact you.'
         }, function(err, msg) {
             if (err)
-                console.log('Oh crap! Something effed up!');
+                console.log('Oh crap! Disclaimer effed up!');
             if (!err) {
                 console.log('\n The message with the ID: \n' +
                     msg.sid +
@@ -59,7 +59,7 @@ app.post('/message', function(req, res) {
             body: 'Gotcha! So what\'s your name?'
         }, function(err, msg) {
             if (err)
-                console.log('Oh crap! Something effed up!');
+                console.log('Oh crap! request effed up!');
             if (!err) {
                 console.log('\n The message with the ID: \n' +
                     msg.sid +
@@ -70,7 +70,7 @@ app.post('/message', function(req, res) {
         twilio.sms.messages.create({
             to: number,
             from: '+19173381853',
-            body: 'Finding you people for ' + cuisine + ' food! When you wanna stop search, message back \'STOP\''
+            body: 'Finding you people for ' + cuisine + ' food! When you wanna stop search, message back \' I\'m done \''
         }, function(err, msg) {});
         sendInvites(cuisine);
     }
@@ -86,7 +86,7 @@ app.post('/message', function(req, res) {
             body: 'Gotcha! So what\'s your name?'
         }, function(err, msg) {
             if (err)
-                console.log('Oh crap! Something effed up!');
+                console.log('Oh crap! Submission effed up!' + '\n' + msg);
             if (!err) {
                 console.log('\n The message with the ID: \n' +
                     msg.sid +
@@ -108,7 +108,7 @@ app.post('/message', function(req, res) {
                     body: 'Hey ' + name + ', someone wants to try out ' + cuisine + ' food with you. Call em at ' + number
                 }, function(err, msg) {
                     if (err)
-                        console.log('Oh crap! Something effed up!');
+                        console.log('Oh crap! Going effed up!');
                     if (!err) {
                         console.log('\n The message with the ID: \n' +
                             msg.sid +
@@ -121,6 +121,30 @@ app.post('/message', function(req, res) {
     }
 
     if (isDone(msg)) {
+        fbr.once('value', function(datasnap) {
+            datasnap.forEach(function(snapshot) {
+                snapshot.forEach(function(snap) {
+                    var num = snap.child('number').val();
+                    if (num == number) {
+                        snap.ref().set(null);
+                    }
+                })
+            })
+        });
+        twilio.sms.messages.create({
+            to: number,
+            from: '+19173381853',
+            body: 'Okie dokes! enjoy your meal.'
+        }, function(err, msg) {
+            if (err)
+                console.log('Oh crap! Done effed up!');
+            if (!err) {
+                console.log('\n The message with the ID: \n' +
+                    msg.sid +
+                    '\n was sucessfully sent to ' + msg.to);
+                console.log('The message was: ' + msg.body + '\n')
+            };
+        });
 
     } else if (!isSubmission(msg) && !isRequest(msg) && !isGreeting(msg) && !isGoing(msg)) {
         nameSave(msg, req.body.From);
@@ -156,7 +180,7 @@ function isGoing(msg) {
 }
 
 function isDone(msg) {
-    if (msg.indexOf('STOP') > -1) {
+    if (msg.indexOf('I\'m done') > -1) {
         return true;
     }
     return false;
