@@ -11,19 +11,44 @@ app.use(bodyParser.urlencoded({
     extended: false
 }));
 
-
-
 app.post('/message', function(req, res) {
     var msg = req.body.Body;
+    var number = req.body.From;
     var cuisine = getCuisine(msg);
 
-    if (isRequest(msg)) {
-        console.log('Tis a novice of ' + getCuisine(msg));
+    if(isGreeting(msg)){
+        twilio.sms.messages.create({
+            to: number,
+            from: '+19173381853',
+            body: 'Heyoo! Just message back saying whether you want to try something or know about some cuisine and we\'ll set you right up'
+        },function(err, msg){});
+    }
 
+    if (isRequest(msg)) {
+        var fbChild = fb.child(cuisine);
+        fbChild.once('value', function(datasnap) {
+            datasnap.forEach(function(snapshot) {
+                var name = snapshot.child('name').val();
+                var num = snapshot.child('number').val();
+                twilio.sms.messages.create({
+                    to: num,
+                    from: '+19173381853',
+                    body: 'Hey ' + name + ', someone wants to try out ' + cuisine + ' food. If you wanna be a foodie, reply saying \'I\'ll go\''
+                }, function(err, msg) {
+                    if (err)
+                        console.log('Oh crap! Something effed up!');
+                    if (!err) {
+                        console.log('\n The message with the ID: \n' +
+                            msg.sid +
+                            '\n was sucessfully sent to ' + msg.to);
+                        console.log('The message was: ' + msg.body + '\n')
+                    };
+                });
+            });
+        });
     }
 
     if (isSubmission(msg)) {
-        var number = req.body.From;
         var fbChild = fb.child(cuisine);
         fbChild.push({
             'number': number
@@ -44,8 +69,17 @@ app.post('/message', function(req, res) {
         });
     };
 
-    nameSave(msg, req.body.From);
+    if(!isSubmission(msg) && !isRequest(msg) && !isGreeting(msg)){
+        nameSave(msg, req.body.From);
+    }
 });
+
+function isGreeting(msg) {
+    if(msg.indexOf('foodie') > -1){
+        return true;
+    }
+    return false;
+}
 
 function isRequest(msg) {
     if ((msg.indexOf('I want to try') > -1) || (msg.indexOf('I would like to try') > -1) || (msg.indexOf('I feel like trying') > -1)) {
